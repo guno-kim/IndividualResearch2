@@ -1,0 +1,51 @@
+<div class="ide-wrapper" *ngIf="project" (click)="disableContextMenu($event)">
+    <aside class="file-navigator" (contextmenu)="navContextMenu($event); openContextMenu($event)">
+        <div class="file-wrapper">
+            <h1>{{project.name}}</h1>
+            <ul (contextmenu)="directoryContextMenu($event, null); openContextMenu($event)">
+                <ng-template #recursiveList let-list>
+                    <li *ngFor="let file of list" [ngClass]="{'delete': file.isDelete}" (contextmenu)="directoryContextMenu($event, file); openContextMenu($event)">
+                        <p (click)="clickFile(file)" [ngClass]="{'modify': file.isTemp || file.modify}">
+                            <span *ngIf="file.isDirectory">D</span>
+                            {{file.name}}
+                        </p>
+                        <ul *ngIf="file.isDirectory && file.open && file.files.length > 0">
+                            <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: file.files }"></ng-container>
+                        </ul>
+                    </li>
+                </ng-template>
+                <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: project.files }"></ng-container>
+            </ul>
+        </div>
+    </aside>
+    <section>
+        <div class="editor-wrapper">
+            <tab-component #tabComponent [upload]="uploadFile" [compile]="compileProject">
+            </tab-component>
+        </div>
+        <div class="console-wrapper">
+            <div ace-editor class="console" theme='eclipse' [(text)]="resultConsole"></div>
+            <div class="console-input-wrapper">
+                <input type="text" (keyup)="consoleInput($event)"/>
+            </div>
+        </div>
+    </section>
+</div>
+
+
+<ng-container *ngIf="contextMenu.visible">
+    <div class="context-menu" [ngStyle]="{'top.px': contextMenu.y, 'left.px': contextMenu.x}">
+        <div class="menu-item" [ngClass]="{'disabled': !contextMenu.addFile}"
+            (click)="addFile(); disableContextMenu($event)">add file</div>
+
+        <div class="menu-item" [ngClass]="{'disabled': !contextMenu.addDirectory}"
+            (click)="addDirectory(); disableContextMenu($event)">add directory</div>
+
+            <div class="menu-item" [ngClass]="{'disabled': !contextMenu.rename}"
+            (click)="renameFile(); disableContextMenu($event)">rename</div>
+        <div class="menu-item" [ngClass]="{'disabled': !contextMenu.delete}"
+            (click)="deleteFile(); disableContextMenu($event)">delete</div>
+    </div>
+</ng-container>
+
+<modal-name [apply]="apply" [project]="project" (modalOff)="modalOff($event)" #nameModal></modal-name>
