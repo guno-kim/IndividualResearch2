@@ -7,6 +7,7 @@ import {logger} from "./logger";
 
 import {auth} from "./auth";
 import {router} from "./v1/router";
+import * as path from 'path';
 
 const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
@@ -18,6 +19,8 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(morgan(logger));
 app.use(auth.initialize());
+
+app.use (express.static(path.join( __dirname,'./pages')));
 
 // config router
 app.use("/api", router);
