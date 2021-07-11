@@ -130,6 +130,7 @@ const result = async (req: express.Request, res: express.Response) => {
 };
 
 async function submit(req: express.Request, res: express.Response) {
+    console.log('>>>>>>>>submitted');
     
     const id = parseInt(req.params.id, 10);
     const { user } = req.user;
@@ -140,6 +141,7 @@ async function submit(req: express.Request, res: express.Response) {
     const result = rows[0];
 
     const sourcePath = getUserPath({...user, ...result});
+    console.log(sourcePath);
     
     let docker: ChildProcess;
 
@@ -166,11 +168,13 @@ async function submit(req: express.Request, res: express.Response) {
 
     docker.stdout.on("end", async (data) => {
         if(isDockerDie) return;
-        const [testCases] = await connection.execute("SELECT * FROM testCases WHERE id = ?", [result.problem]);
+        const [testCases] = await connection.execute("SELECT * FROM testCases WHERE problem = ?", [result.problem]);
         const testMax = testCases.length;
         let testProccessing = 0;
         let testSuccess = 0;
-
+        console.log('result',result);
+        console.log('testCases',testCases);
+        
         testCases.forEach(testCase => {
             //TODO: category
             const runTestCaseProcess = spawn("docker", ["run", "--rm", "-i", "-v", `${sourcePath}:/src`, "java-run:1.0"]);

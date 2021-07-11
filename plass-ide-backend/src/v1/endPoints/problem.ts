@@ -4,8 +4,9 @@ import connection from "../../connection";
 const getProblems = async (req: express.Request, res: express.Response) => {
     const unit = req.query.unit || 10;
     const page = req.query.page || 0;
-
-    const [rows] = await connection.execute("SELECT * FROM problems LIMIT ?, ?", [page * unit, unit]);
+        
+    //const [rows] = await connection.execute("SELECT * FROM problems LIMIT ?, ?", [page * unit, unit]);
+    const [rows] = await connection.execute("SELECT * FROM problems LIMIT 0, 10");
 
     res
         .status(200)

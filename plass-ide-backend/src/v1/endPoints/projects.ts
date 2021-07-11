@@ -220,7 +220,12 @@ const putProjectFile = async function(req: express.Request, res: express.Respons
     const { user } = req.user;
     if(!id) { res.status(400).send({code: 0, msg: "id is not integer"}); return; }
     if(!path) { res.status(400).send({code: 1, msg: "no file path"}); return; }
-
+    console.log('id',id);
+    console.log('path',path);
+    console.log('data',data);
+    console.log('name',name);
+    console.log('user',user);
+    
     try {
         const [rows] = await connection.execute("SELECT * FROM projects WHERE id = ? AND user = ? AND enabled = true", [id, user.id]);
         if(rows.length != 1) { res.status(400).send({code:2, msg: "no project data"}); return; }
@@ -228,6 +233,9 @@ const putProjectFile = async function(req: express.Request, res: express.Respons
 
         const userpath = getUserPath({...user, ...result});
         const _path = `${userpath}/${path}`;
+        console.log('-------------');
+        console.log(_path);
+        
         
 
         if(!existsSync(_path)) {

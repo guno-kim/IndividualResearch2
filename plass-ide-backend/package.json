@@ -5,13 +5,13 @@
   "main": "build/app.js",
   "scripts": {
     "build": "npm run lint && npm run clean && tsc",
-    "tsc":"tsc",
-    "test":"node build/src/app.js",
-
+    "tsc": "tsc",
+    "test": "node build/src/app.js",
     "clean": "rimraf build",
     "lint": "tslint -s --project tsconfig.json",
     "start": "ts-node src/app.ts",
-    "start:live": "nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.spec.ts' --exec 'ts-node' src/app.ts"
+    "start:live": "nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.spec.ts' --exec ts-node src/app.ts",
+    "dev": "nodemon --exec ts-node src/app.ts"
   },
   "keywords": [],
   "author": "",
@@ -46,8 +46,10 @@
     "morgan": "^1.9.1",
     "mysql2": "^1.6.5",
     "ncp": "^2.0.0",
+    "nodemon": "^2.0.9",
     "passport": "^0.4.0",
     "passport-jwt": "^4.0.0",
-    "socket.io": "^2.2.0"
+    "socket.io": "^2.2.0",
+    "ts-node": "^10.0.0"
   }
 }

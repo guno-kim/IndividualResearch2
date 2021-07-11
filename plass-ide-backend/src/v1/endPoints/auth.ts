@@ -8,8 +8,11 @@ const signin = async (req: express.Request, res: express.Response) => {
     const user = req.body.userId;
     const password = req.body.userPw;
     
+    console.log('----------------')
+    console.log(user,password)
     try {
         const [rows] = await connection.execute("SELECT * FROM users WHERE username = ? AND password = ?", [ user, password ]);
+        console.log(rows)
         
         if (rows.length != 1) {
             res.status(400).send();
@@ -17,7 +20,7 @@ const signin = async (req: express.Request, res: express.Response) => {
         }
 
         const token = auth.signToken({ user: rows[0] });
-
+        console.log(token)
         res.cookie("token", token).status(200).send(rows[0]);
     } catch (e) {
         console.log(e);
