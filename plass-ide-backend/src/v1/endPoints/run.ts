@@ -210,7 +210,6 @@ async function submit(req: express.Request, res: express.Response) {
 }
 
 async function submit1(req: express.Request, res: express.Response) {
-    console.log('!!!!!!!!!!!!!submit1');
     
     const id = parseInt(req.params.id, 10);
     const { user } = req.user;

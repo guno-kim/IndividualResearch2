@@ -1,4 +1,3 @@
-import { arch } from "os";
 import connection from "../connection";
 import {VariableName} from '../types'
 
@@ -11,14 +10,6 @@ class IntVariable{
     max:Number;
     value:Number;
     fix:Boolean;
-    // constructor(name,min,max,fix){
-    //     this.type='int'
-    //     this.name=name
-    //     this.min=min
-    //     this.max=max
-    //     this.fix=fix
-    //     this.value=undefined
-    // }
     constructor(data){
         this.type='int'
         this.name=data.name
@@ -44,13 +35,6 @@ class CharVariable{
     candidates:Array<VariableName>;
     fix:Boolean;
     value:String;
-    // constructor(name,candidates,fix){
-    //     this.type='char'
-    //     this.name=name
-    //     this.candidates=candidates
-    //     this.fix=fix
-    //     this.value=undefined
-    // }
     constructor(data){
         this.type='char'
         this.name=data.name
@@ -80,7 +64,7 @@ class VariableTable{
         });
         this.table.forEach(v=>{
             //v.value=undefined
-            v.value=this.getValue1(v.name)
+            v.value=this.getValue(v.name)
         })
     }
     
@@ -108,27 +92,15 @@ class VariableTable{
             throw new Error(`변수 선언 오류`)
         }
     }
-    // getValue(name){
-    //     if(!isNaN(parseFloat(name)))
-    //         return eval(name)
-    //     let v=this.getVariable(name)
+    getValue(name){
+        if (!isNaN(parseInt(name)))
+            return eval(name)
 
-    //     if(!v) throw new Error(`변수 선언 오류`)
-    //     if(v.fix&&v.value!=undefined)
-    //         return v.value
-    //     let min=this.compute(v.min)
-    //     let max=this.compute(v.max)
-    //     if(isNaN(min)||isNaN(max)||min>max)
-    //         throw new Error('최대 최소 오류')
-    //     let value=Math.floor(Math.random() * (max - min + 1)) + min;
-    //     v.value=value
-    //     return value
-    // }
-    getValue1(name){
         let v=this.getVariable(name)
         if(!v) throw new Error(`선언하지 않은 변수 사용`)
         if(v.fix&&v.value!=undefined)
             return v.value
+            
         if(v.type=='int'){
             v=new IntVariable(v.getData())
             let min=this.compute(v.min)
@@ -146,18 +118,6 @@ class VariableTable{
             return candidates[idx]
         }
     }
-
-    // init(variables){
-    //     variables.forEach(v => {
-    //         if(this.table.find( e =>  e.name==v.name))
-    //             throw new Error('변수 이름 중복')
-    //         this.table.push(v)
-    //     });
-    //     this.table.forEach(v=>{
-    //         //v.value=undefined
-    //         v.value=this.getValue(v.name)
-    //     })
-    // }
 }
 
 export const getVariableTable=(problems_id)=>{
@@ -166,7 +126,6 @@ export const getVariableTable=(problems_id)=>{
         let [char_variables] = await connection.execute("SELECT * FROM char_variables WHERE problems_id = ?", [problems_id]);
         int_variables=int_variables.map((e)=>new IntVariable(e))
         char_variables=char_variables.map((e)=>new CharVariable({...e,candidates:e.candidates['data']}))
-        console.log(int_variables.concat(char_variables));
         
         resolve( new VariableTable(int_variables.concat(char_variables)) )
     })

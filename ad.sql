@@ -27,10 +27,16 @@ class Main{\n
 }'
 );
 
-INSERT INTO int_variables(name,min,max,fix,problems_id) VALUES('a',-100,100,true,2);
-INSERT INTO int_variables(name,min,max,fix,problems_id) VALUES('b',-100,100,true,2);
-INSERT INTO char_variables(name,candidates,fix,problems_id) VALUES('c','{"data":["a","b","c","d"]}',true,2);
 
+INSERT INTO int_variables(name,min,max,fix,problems_id) VALUES('a',-100,100,false,2);
+INSERT INTO int_variables(name,min,max,fix,problems_id) VALUES('b',-100,100,false,2);
+INSERT INTO char_variables(name,candidates,fix,problems_id) 
+VALUES('c','{"data":["!","@","#","$"]}',false,2);
+
+INSERT INTO blocks(problems_id,id,box,horizon_rep,vertical_rep,space) 
+VALUES(2,1,'{"data":[["a","b"],["a","a","a"]]}',3,2,true);
+INSERT INTO blocks(problems_id,id,box,horizon_rep,vertical_rep,space) 
+VALUES(2,2,'{"data":[["c","c","c","c"],["c","c"]]}',2,3,false);
 
 
 
