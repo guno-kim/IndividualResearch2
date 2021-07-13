@@ -4,7 +4,7 @@ import * as crypto from "crypto";
 
 import { getUserPath  } from "../../helper/path-helper";
 import connection from "../../connection";
-
+import { getTestCases } from "../../helper/testcases"
 const dockerInstance: {
     [key: string]: IDockerInstance;
 } = {};
@@ -130,8 +130,6 @@ const result = async (req: express.Request, res: express.Response) => {
 };
 
 async function submit(req: express.Request, res: express.Response) {
-    console.log('>>>>>>>>submitted');
-    
     const id = parseInt(req.params.id, 10);
     const { user } = req.user;
     if(!id) { res.status(400).send("no projects"); return;}
@@ -142,6 +140,7 @@ async function submit(req: express.Request, res: express.Response) {
 
     const sourcePath = getUserPath({...user, ...result});
     console.log(sourcePath);
+    console.log('result',result);
     
     let docker: ChildProcess;
 
@@ -210,9 +209,32 @@ async function submit(req: express.Request, res: express.Response) {
 
 }
 
+async function submit1(req: express.Request, res: express.Response) {
+    console.log('!!!!!!!!!!!!!submit1');
+    
+    const id = parseInt(req.params.id, 10);
+    const { user } = req.user;
+    if(!id) { res.status(400).send("no projects"); return;}
+
+    const [rows] = await connection.execute("SELECT * FROM projects WHERE id = ? AND user = ? AND enabled = true", [id, user.id]);
+    if(rows.length != 1) { res.status(400).send("no data"); return; }
+    const project = rows[0];
+    const [rows1] = await connection.execute("SELECT * FROM problems WHERE id = ?", [project.problem]);
+    const problem=rows1[0]
+    const testCases=await getTestCases(problem)
+
+    const sourcePath = getUserPath({...user, ...project});
+
+    
+}
+
+
+
+
 export const runEndPoint = {
     run,
     input,
     result,
-    submit
+    submit,
+    submit1
 };

@@ -1,36 +1,50 @@
+--데이터
+INSERT INTO users(username,password,name) VALUES ('a','a','guno');
 
-INSERT INTO users(username,password,name) VALUES ('test','1234','guno');
-
-CREATE TABLE `problems` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` text COLLATE utf8_bin,
-  `content` text COLLATE utf8_bin,
-  `rank` int(11) DEFAULT NULL,
-  `created` timestamp NULL DEFAULT NULL,
-  `category` varchar(45) COLLATE utf8_bin DEFAULT NULL,
-  `input` text COLLATE utf8_bin,
-  `output` text COLLATE utf8_bin,
-  `remarks` varchar(45) COLLATE utf8_bin DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-
-INSERT INTO problems(id,name,content,category,input,output,remarks) 
-VALUES (1,'더하기','컨텐트','plus','두개의 정수 A,B','A와 B의 합','-100<=A,B<=100');
-SELECT * FROM problems LIMIT 0, 10
-
-DELETE FROM users WHERE id = 4;
-DELETE FROM users WHERE id = 4;
-DELETE FROM problems WHERE id = 27;
-
-CREATE TABLE `testCases` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `input` varchar(45) DEFAULT NULL,
-  `output` varchar(45) DEFAULT NULL,
-  `problem` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+--더하기 수동
+INSERT INTO problems(id,name,content,category,input,output,remarks,auto) 
+VALUES (1,'더하기','컨텐트','plus','두개의 정수 A,B','A와 B의 합','-100<=A,B<=100',false);
 
 INSERT INTO testCases(input,output,problem) VALUES('1 2','3',1);
 INSERT INTO testCases(input,output,problem) VALUES('-1 7','6',1);
 INSERT INTO testCases(input,output,problem) VALUES('-1 7','8',1);
+
+--더하기 문제 자동
+
+INSERT INTO problems(id,name,content,category,input,output,remarks,auto) 
+VALUES (2,'더하기','컨텐트','plus','두개의 정수 A,B','A와 B의 합','-100<=A,B<=100',true);
+
+INSERT INTO auto_testcases(problems_id,testcase_num) VALUES(2,10);
+
+INSERT INTO answer_codes(id,language,problems_id,code) VALUES(
+  1,'java',2,
+  'import java.util.*;\n
+class Main{\n
+	public static void main(String[]t){\n
+		Scanner x=new Scanner(System.in);\n
+		System.out.print(x.nextInt()+x.nextInt());\n
+	}\n
+}'
+);
+
+INSERT INTO int_variables(name,min,max,fix,problems_id) VALUES('a',-100,100,true,2);
+INSERT INTO int_variables(name,min,max,fix,problems_id) VALUES('b',-100,100,true,2);
+INSERT INTO char_variables(name,candidates,fix,problems_id) VALUES('c','{"data":["a","b","c","d"]}',true,2);
+
+
+
+
+------------------------
+
+
+
+INSERT INTO AutoTestCaseBlock(problem_id,box) VALUES(1,{"block":[[a,b],[1,2]]});
+INSERT INTO AutoTestCaseBlock(problem_id,box) VALUES(1,{"asd":"12"});
+
+CREATE TABLE caseTest (box json);
+INSERT INTO caseTest(box) VALUES('{"data":[["a","b"],[1,2]]}');
+INSERT INTO caseTest(box) VALUES('{"block":[1,2]}');
+
+INSERT INTO `int`(AutoTestCase_Problem_id,name,fix) VALUES(1,'a',true);
+INSERT INTO AutoTestCase(problem_id) VALUES (1);
 

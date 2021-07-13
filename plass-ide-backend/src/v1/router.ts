@@ -38,6 +38,6 @@ router.delete("/projects/:id/*", authenticate, ProjectsEndPoint.deleteProjectFil
 router.post("/run/projects/:id", authenticate, runEndPoint.run);
 router.put("/run/:hash", authenticate, runEndPoint.input);
 router.get("/run/:hash", authenticate, runEndPoint.result);
-router.post("/submit/projects/:id", authenticate, runEndPoint.submit);
+router.post("/submit/projects/:id", authenticate, runEndPoint.submit1);
 
 export {router};
