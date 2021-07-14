@@ -96,12 +96,12 @@ export class ProblemConsoleComponent implements OnInit {
             this.resultConsole = "";
             this.dataService.submit(this.project.id).subscribe((value) => {
                 this.resultSubmit = value;
+                console.log(this.resultSubmit);
             });
         }, error => {
             alert("잠시 후 다시 시도해주세요.");
         });
     }
-
     dismissResult() {
         this.resultSubmit = null;
     }

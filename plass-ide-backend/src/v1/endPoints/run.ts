@@ -162,13 +162,22 @@ async function submit(req: express.Request, res: express.Response) {
             correct
         })
     }
-    
+    let falseCases=[]
+    if(problem.auto){
+        for(let i=0;i<testResult.length;i++){
+            if(!testResult[i].correct){
+                falseCases.push({input:testCases.inputs[i],answer:testCases.outputs[i],output:outputs[i].output})
+            }
+            if(falseCases.length==3)
+                break
+        }
+    }
     res.json({
         compile: true,
         testMax:testCases.outputs.length, // 테스트 케이스 개수
         testSuccess:testResult.filter((e)=>e.correct).length,
         compileError:testResult.filter((e)=>!e.compile).length,
-        result:testResult
+        falseCases:falseCases
     })
 }
 

@@ -26,6 +26,26 @@
             <p><label>컴파일</label> : {{resultSubmit.compile ? "성공" : "실패"}}</p>
             <p><label>전체 테스트 케이스</label> : {{resultSubmit.testMax}}</p>
             <p><label>통과한 테스트 케이스</label> : {{resultSubmit.testSuccess}}</p>
+                <table style="background-color: rgb(250, 248, 246); border: 1px solid;">
+                    <th>입력값</th>
+                    <th>채점 결과</th>
+                    <th>정답</th>
+                    <tr>
+                        <td>{{resultSubmit.falseCases[0].input}}</td>
+                        <td>{{resultSubmit.falseCases[0].output}}</td>
+                        <td>{{resultSubmit.falseCases[0].answer}}</td>
+                    </tr>
+                    <tr>
+                        <td>{{resultSubmit.falseCases[1].input}}</td>
+                        <td>{{resultSubmit.falseCases[1].output}}</td>
+                        <td>{{resultSubmit.falseCases[1].answer}}</td>
+                    </tr>
+                    <tr>
+                        <td>{{resultSubmit.falseCases[2].input}}</td>
+                        <td>{{resultSubmit.falseCases[2].output}}</td>
+                        <td>{{resultSubmit.falseCases[2].answer}}</td>
+                    </tr>
+                </table>
             <p>
                 <button (click)="dismissResult()">완료</button>
             </p>
