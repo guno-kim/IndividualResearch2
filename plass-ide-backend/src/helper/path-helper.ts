@@ -10,7 +10,9 @@ const fileDir = join(__dirname, "../../files");
 export function getUserPath({username, path}: {username: string, path: string}) {
     return `${fileDir}/${username}/${path}`;
 }
-
+export function getAnswerPath(problemId: string) {
+    return `${fileDir}/answerCodes/${problemId}`;
+}
 /**
  * get all files in directory
  * implments by recursive function

@@ -5,6 +5,7 @@ import * as crypto from "crypto";
 import { getUserPath  } from "../../helper/path-helper";
 import connection from "../../connection";
 import { getTestCases } from "../../helper/testcases"
+import { test } from "../../helper/test"
 const dockerInstance: {
     [key: string]: IDockerInstance;
 } = {};
@@ -130,101 +131,45 @@ const result = async (req: express.Request, res: express.Response) => {
 };
 
 async function submit(req: express.Request, res: express.Response) {
-    const id = parseInt(req.params.id, 10);
-    const { user } = req.user;
-    if(!id) { res.status(400).send("no projects"); return;}
-
-    const [rows] = await connection.execute("SELECT * FROM projects WHERE id = ? AND user = ? AND enabled = true", [id, user.id]);
-    if(rows.length != 1) { res.status(400).send("no data"); return; }
-    const result = rows[0];
-
-    const sourcePath = getUserPath({...user, ...result});
-    console.log(sourcePath);
-    console.log('result',result);
-    
-    let docker: ChildProcess;
-
-    switch(result.category) {
-        case "java":
-            docker = spawn("docker", ["run", "--rm", "-i", "-v", `${sourcePath}:/src`, "java-build:1.0"]);
-            break;
-        case "c":
-            docker = spawn("docker", ["run", "--rm", "-i", "-v", `${sourcePath}:/src`, "c-build:1.0"]);
-            break;
-    }
-
-    let isDockerDie = false;
-    docker.stderr.on("data", (data) => {
-        console.log(data.toString());
-        if(isDockerDie) return;
-        isDockerDie = true;
-        res.json({
-            compile: false,
-            testMax: 0, // 테스트 케이스 개수
-            testSuccess: 0
-        });
-    })
-
-    docker.stdout.on("end", async (data) => {
-        if(isDockerDie) return;
-        const [testCases] = await connection.execute("SELECT * FROM testCases WHERE problem = ?", [result.problem]);
-        const testMax = testCases.length;
-        let testProccessing = 0;
-        let testSuccess = 0;
-        console.log('result',result);
-        console.log('testCases',testCases);
-        
-        testCases.forEach(testCase => {
-            //TODO: category
-            const runTestCaseProcess = spawn("docker", ["run", "--rm", "-i", "-v", `${sourcePath}:/src`, "java-run:1.0"]);
-
-            let isSuccess = false;
-
-            runTestCaseProcess.stdin.write(testCase.input + "\n");
-            
-
-            runTestCaseProcess.stdout.on("data", (value) => {; 
-                isSuccess = value.toString().trim() == testCase.output.trim();
-            });
-
-            runTestCaseProcess.on("close", function() {
-                testSuccess += isSuccess ? 1 : 0;
-                testProccessing++;
-
-                if(testMax <= testProccessing) {
-                    res.json({
-                        compile: true,
-                        testMax, // 테스트 케이스 개수
-                        testSuccess
-                    });
-                }
-            });
-        });
-    });
-
-
-
-
-    const testResult = 0;
-
-}
-
-async function submit1(req: express.Request, res: express.Response) {
     
     const id = parseInt(req.params.id, 10);
     const { user } = req.user;
     if(!id) { res.status(400).send("no projects"); return;}
 
-    const [rows] = await connection.execute("SELECT * FROM projects WHERE id = ? AND user = ? AND enabled = true", [id, user.id]);
-    if(rows.length != 1) { res.status(400).send("no data"); return; }
-    const project = rows[0];
-    const [rows1] = await connection.execute("SELECT * FROM problems WHERE id = ?", [project.problem]);
-    const problem=rows1[0]
-    const testCases=await getTestCases(problem)
+    const [[project]] = await connection.execute("SELECT * FROM projects WHERE id = ? AND user = ? AND enabled = true", [id, user.id]);
+    if(!project) { res.status(400).send("no data"); return; }
+    const [[problem]] = await connection.execute("SELECT * FROM problems WHERE id = ?", [project.problem]);
+    
+    const testCases:any=await getTestCases(problem)
 
     const sourcePath = getUserPath({...user, ...project});
-
+    const outputs:any=await test(sourcePath,project.category,testCases.inputs)
     
+    
+    let testResult=[]
+    for(let i=0;i<outputs.length;i++){
+        let compile=false,correct=false
+        if(outputs[i].compile){
+            compile=true
+            if(outputs[i].output==testCases.outputs[i]){
+                correct=true
+            }
+        }
+        testResult.push({
+            answer:testCases.outputs[i],
+            submit:outputs[i].output,
+            compile,
+            correct
+        })
+    }
+    
+    res.json({
+        compile: true,
+        testMax:testCases.outputs.length, // 테스트 케이스 개수
+        testSuccess:testResult.filter((e)=>e.correct).length,
+        compileError:testResult.filter((e)=>!e.compile).length,
+        result:testResult
+    })
 }
 
 
@@ -235,5 +180,4 @@ export const runEndPoint = {
     input,
     result,
     submit,
-    submit1
 };

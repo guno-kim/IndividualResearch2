@@ -30,13 +30,12 @@ class Main{\n
 
 INSERT INTO int_variables(name,min,max,fix,problems_id) VALUES('a',-100,100,false,2);
 INSERT INTO int_variables(name,min,max,fix,problems_id) VALUES('b',-100,100,false,2);
-INSERT INTO char_variables(name,candidates,fix,problems_id) 
-VALUES('c','{"data":["!","@","#","$"]}',false,2);
 
 INSERT INTO blocks(problems_id,id,box,horizon_rep,vertical_rep,space) 
-VALUES(2,1,'{"data":[["a","b"],["a","a","a"]]}',3,2,true);
-INSERT INTO blocks(problems_id,id,box,horizon_rep,vertical_rep,space) 
-VALUES(2,2,'{"data":[["c","c","c","c"],["c","c"]]}',2,3,false);
+VALUES(2,1,'{"data":[["a","a"]]}',1,1,true);
+
+
+
 
 
 
@@ -44,13 +43,11 @@ VALUES(2,2,'{"data":[["c","c","c","c"],["c","c"]]}',2,3,false);
 
 
 
-INSERT INTO AutoTestCaseBlock(problem_id,box) VALUES(1,{"block":[[a,b],[1,2]]});
-INSERT INTO AutoTestCaseBlock(problem_id,box) VALUES(1,{"asd":"12"});
 
-CREATE TABLE caseTest (box json);
-INSERT INTO caseTest(box) VALUES('{"data":[["a","b"],[1,2]]}');
-INSERT INTO caseTest(box) VALUES('{"block":[1,2]}');
+INSERT INTO char_variables(name,candidates,fix,problems_id) 
+VALUES('c','{"data":["!","@","#","$"]}',false,2);
 
-INSERT INTO `int`(AutoTestCase_Problem_id,name,fix) VALUES(1,'a',true);
-INSERT INTO AutoTestCase(problem_id) VALUES (1);
-
+INSERT INTO blocks(problems_id,id,box,horizon_rep,vertical_rep,space) 
+VALUES(2,1,'{"data":[["a","b"],["a","a","a"]]}',3,2,true);
+INSERT INTO blocks(problems_id,id,box,horizon_rep,vertical_rep,space) 
+VALUES(2,2,'{"data":[["c","c","c","c"],["c","c"]]}',2,3,false);
